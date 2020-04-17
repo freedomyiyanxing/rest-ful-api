@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="./style/reset.css">
+  <style>
+    label {
+      flex: 0 0 60px;
+    }
+
+    input {
+      flex: 1;
+      padding: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #194A80;
+      border: none;
+      width: 120px;
+      height: 32px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    h2 {
+      font-size: 18px;
+      padding: 10px 0;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .main {
+      display: flex;
+    }
+
+    .user {
+      flex: 0 0 300px;
+    }
+
+    .container {
+      flex: 1;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      padding: 20px;
+    }
+
+    .login, .registered, .user {
+      flex: 0 0 25%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border: 1px solid rebeccapurple;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      border: 2px dashed #be3131;
+      padding: 10px;
+      margin: 20px;
+    }
+
+    .user-item {
+      margin-bottom: 10px;
+    }
+
+    .user-container {
+      margin-bottom: 20px;
+    }
+
+    .item {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="main">
+  <div class="user">
+    <h2>用户列表</h2>
+    <div class="user-list"></div>
+  </div>
+  <div class="container">
+    <div class="wrapper">
+      <div class="login">
+        <h2>登录区块</h2>
+        <div class="item">
+          <label for="login-name">用户名:</label>
+          <input type="text" id="login-name" name="name">
+        </div>
+        <div class="item">
+          <label for="login-psd">密码:</label>
+          <input type="text" id="login-psd" name="psd">
+        </div>
+        <div class="item">
+          <button type="button" onclick="handleLoginBtn()">登录</button>
+        </div>
+      </div>
+
+      <div class="registered">
+        <h2>注册区块</h2>
+        <div class="item">
+          <label for="login-name">用户名:</label>
+          <input type="text" id="registered-name" name="name">
+        </div>
+        <div class="item">
+          <label for="login-psd">密码:</label>
+          <input type="text" id="registered-psd" name="psd">
+        </div>
+        <div class="item">
+          <button type="button" onclick="handleRegisteredBtn()">注册</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.myFetch = function (url, options = {}) {
+    const option = Object.assign({
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+    }, options);
+    if (option.auth) {
+      option.headers.Authorization = options.auth
+    }
+    delete option.auth;
+    return fetch(url, option).then(res => res.json());
+  }
+</script>
+
+<script>
+  const userList = document.querySelector('.user-list');
+
+  function strFn(arr) {
+    let str = '';
+    arr.forEach((item) => {
+      str += `
+        <div class="user-container">
+          <button type="button" id="${item._id}">X</button>
+          <div class="user-item">姓名：${item.name}</div>
+          <div class="user-item">id：${item._id}</div>
+          <div class="user-item">密码：${item.password}</div>
+          </div>
+        `
+    });
+    userList.innerHTML = str;
+  }
+
+  (function () {
+    myFetch('/users').then((response) => {
+      console.log(response.data);
+      strFn(response.data)
+    });
+  })();
+
+</script>
+
+<script>
+  // 删除
+  function handleDelete(id) {
+    console.log(id);
+    myFetch(`/users/${id}`, {
+      method: 'DELETE',
+      auth: window.sessionStorage.getItem('Authorization'),
+    }).then((response) => {
+      console.log(response);
+      if (response.code === 'ERROR') {
+        return;
+      }
+      const btn = document.querySelector(`button[id="${id}"]`);
+      btn.parentNode.remove();
+    });
+  }
+
+  document.querySelector('.user-list').addEventListener('click', function (e) {
+    if (e.target.tagName.toLowerCase() === 'button') {
+      handleDelete(e.target.getAttribute('id'))
+    }
+  });
+</script>
+
+<script>
+  // 登录
+
+  const loginName = document.querySelector('#login-name');
+  const loginPsd = document.querySelector('#login-psd');
+
+  function handleLoginBtn() {
+    myFetch('/users/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: loginName.value,
+        password: loginPsd.value,
+      })
+    }).then((response) => {
+      console.log(response);
+      window.sessionStorage.setItem('Authorization', response.data.token)
+    });
+  }
+</script>
+
+<script>
+  // 注册
+
+  const registeredName = document.querySelector('#registered-name');
+  const registeredPsd = document.querySelector('#registered-psd');
+
+  function handleRegisteredBtn() {
+    myFetch('/users', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: registeredName.value,
+        password: registeredPsd.value,
+      })
+    }).then((response) => {
+      console.log(response)
+    });
+  }
+
+</script>
+</body>
+</html>
