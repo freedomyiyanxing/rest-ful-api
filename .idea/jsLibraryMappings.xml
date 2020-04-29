@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/jsonwebtoken, @types/koa-bodyparser, @types/koa-json-error, @types/koa-router, @types/mongoose, @types/node}" />
-    <includedPredefinedLibrary name="HTTP Response Handler" />
-    <includedPredefinedLibrary name="Node.js Core" />
-  </component>
-</project>
