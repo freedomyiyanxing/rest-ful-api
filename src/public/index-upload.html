@@ -20,6 +20,8 @@
     // FormData 的数据集已经是经过multipart/form-data 算法编码过的，因此不需要再在请求头中设置
     const form = new FormData();
     form.append('file', file.files[0]);
+    console.log(file.files);
+    console.log(form);
     fetch('/upload', {
       method: 'POST',
       body: form,
