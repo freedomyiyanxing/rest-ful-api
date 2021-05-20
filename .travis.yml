@@ -8,3 +8,5 @@ cache:
 install:
   - yarn install
 
+after_success:
+  - echo 'I successfully done'
