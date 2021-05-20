@@ -8,5 +8,3 @@ cache:
 install:
   - yarn install
 
-script:
-  - yarn pro
