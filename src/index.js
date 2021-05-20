@@ -52,5 +52,5 @@ routers(app);
 
 
 app.listen(3000, () => {
-  console.log('koa web api 服务 启动成功...')
+  console.log('koa web api 服务 启动成功... 3000')
 });
